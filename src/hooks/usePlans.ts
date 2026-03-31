@@ -9,7 +9,7 @@ interface DatabasePlan {
   price_aud: number;
   duration_months: number;
   description: string;
-  features: string;
+  features: string[];
   is_active: boolean;
   is_featured: boolean;
   display_order: number;
@@ -41,7 +41,7 @@ export function usePlans() {
         currency: 'AUD',
         duration: plan.duration_months === 12 ? 'Monthly' : 'One-time payment',
         description: plan.description,
-        features: JSON.parse(plan.features),
+        features: Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features as unknown as string),
         recommended: plan.is_featured,
         color: getColorForPlan(plan.name)
       }));

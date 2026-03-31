@@ -42,31 +42,22 @@ export function useProducts() {
       setLoading(true);
       setError(null);
 
-      const headers: Record<string, string> = {};
-      
-      // If we want to include inactive products, we need admin auth
-      if (includeInactive) {
-        const token = localStorage.getItem('admin_token');
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
-        }
+      let query = supabase
+        .from('products_2026_03_11_22_20')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (!includeInactive) {
+        query = query.eq('is_active', true);
       }
 
-      const { data, error } = await supabase.functions.invoke('product_management_2026_03_11_22_20', {
-        method: 'GET',
-        headers
-      });
+      const { data, error } = await query;
 
       if (error) {
-        console.error('Supabase function error:', error);
-        throw new Error('Network error');
-      }
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to fetch products');
+        throw error;
       }
 
-      setProducts(data.products || []);
+      setProducts((data as Product[]) || []);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch products';
       setError(errorMessage);
