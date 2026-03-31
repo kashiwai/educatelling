@@ -1,0 +1,212 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@500;600&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+==========================================================================
+【AI HANDOVER NOTE】
+1. DESIGN PHILOSOPHY:
+   - Playful Trust Architecture: 子供の好奇心を刺激しながら、オーストラリアの親御様に信頼感を与える二層構造のデザイン
+   - Joyful Learning Atmosphere: オレンジ（太陽・エネルギー）と水色（オーストラリアの海・空）を核とした明るく開放的な配色
+   - Educational E-commerce Hybrid: 教育サービスとしての専門性と、オンライン決済の安心感を両立
+   - この風格は、子供向けの親しみやすさと、高額な教育投資に対する親の信頼感という相反する要素を調和させるために選択されました
+
+2. TYPOGRAPHY:
+   - Nunito (Primary Sans): 丸みを帯びた幾何学的フォルムが子供向けサイトに最適。柔らかさと読みやすさを兼備し、オーストラリアの教育サイトで広く採用される信頼性の高い書体
+   - Noto Sans JP: 日本語コンテンツ（教材名、レベル表記）に必須。Nunitoとの視覚的調和が良く、多言語サイトの統一感を保持
+   - Poppins (Accent): 価格表示やCTAボタンに使用。幾何学的で現代的、数字の可読性が高く、高額な料金表示でも信頼感を損なわない
+
+3. COLOR SYSTEM:
+   - Brand Primary (Orange H:40): オーストラリアの太陽と子供のエネルギーを象徴。色相40度の暖かいオレンジは、食欲や活動意欲を刺激し、学習への前向きな姿勢を促進
+   - Brand Accent (Cyan H:200): オーストラリアの海と空を想起させる爽やかな水色。色相200度のシアンは、信頼感と清潔感を与え、親御様の安心感を醸成
+   - --brand (Orange) → --primary (CTA/重要アクション), --accent (Cyan/補助的強調), --ring (フォーカス状態)
+   - Success (H:150 Green): 申し込み完了、決済成功などのポジティブフィードバック
+   - Warning (H:45 Amber): 料金プランの注意事項、年齢制限の警告
+   - Destructive (H:10 Red-Orange): キャンセル、削除などの破壊的アクション（子供向けサイトでは控えめに使用）
+
+4. USAGE GUIDE:
+   - Layout Type: Centered container (max-width: 1280px) with generous padding。子供向けコンテンツは大きなカード、親向け情報（料金・問い合わせ）はコンパクトなセクションに分離
+   - Card Design: Bento-style modular cards with soft shadows (shadow-lg) and rounded corners (radius: 1rem)。各教材レベルやプランを視覚的に分離
+   - Interactive Elements: ホバー時に scale-105 + shadow-xl で浮き上がる効果。子供の興味を引きつつ、クリック可能性を明示
+   - Trust Signals: フッターに住所・電話・メールを明記。Stripe決済ロゴを配置し、セキュリティバッジで信頼性を強化
+   - Imagery: 子供が笑顔で学習している写真を hero section と各プランカードに配置。多様性（アジア系・白人系の子供）を意識
+   - Accessibility: WCAG AA準拠。オレンジと水色の組み合わせは色覚異常者にも識別可能な配色。フォントサイズは最小16px
+   - Japanese Typography: 日本語見出しは font-weight: 700、本文は 400。行間 (leading-relaxed) を広めに取り、漢字の可読性を確保
+==========================================================================
+*/
+
+:root {
+  /* Typography */
+  --font-sans: Nunito, 'Noto Sans JP', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Consolas, monospace;
+  
+  /* Radius */
+  --radius: 1rem;
+
+  /* Core UI Tokens */
+  --background: oklch(0.99 0.005 40);
+  --foreground: oklch(0.15 0.02 40);
+  --card: oklch(0.98 0.01 40);
+  --card-foreground: oklch(0.18 0.02 40);
+  --popover: oklch(0.99 0.005 40);
+  --popover-foreground: oklch(0.15 0.02 40);
+  --primary: oklch(0.65 0.19 40);
+  --primary-foreground: oklch(0.99 0.005 40);
+  --secondary: oklch(0.75 0.15 200);
+  --secondary-foreground: oklch(0.15 0.02 200);
+  --muted: oklch(0.94 0.01 40);
+  --muted-foreground: oklch(0.48 0.02 40);
+  --accent: oklch(0.82 0.12 200);
+  --accent-foreground: oklch(0.15 0.02 200);
+  --destructive: oklch(0.58 0.22 10);
+  --destructive-foreground: oklch(0.99 0.005 10);
+  --border: oklch(0.88 0.02 40);
+  --input: oklch(0.88 0.02 40);
+  --ring: oklch(0.65 0.19 40);
+  
+  /* Chart Tokens */
+  --chart-1: oklch(0.65 0.19 40);
+  --chart-2: oklch(0.75 0.15 200);
+  --chart-3: oklch(0.68 0.18 150);
+  --chart-4: oklch(0.72 0.16 280);
+  --chart-5: oklch(0.62 0.20 25);
+  
+  /* Sidebar Tokens */
+  --sidebar: oklch(0.97 0.008 40);
+  --sidebar-foreground: oklch(0.25 0.02 40);
+  --sidebar-primary: oklch(0.65 0.19 40);
+  --sidebar-primary-foreground: oklch(0.99 0.005 40);
+  --sidebar-accent: oklch(0.82 0.12 200);
+  --sidebar-accent-foreground: oklch(0.15 0.02 200);
+  --sidebar-border: oklch(0.90 0.015 40);
+  --sidebar-ring: oklch(0.65 0.19 40);
+}
+
+.dark {
+  --background: oklch(0.14 0.015 240);
+  --foreground: oklch(0.95 0.01 40);
+  --card: oklch(0.17 0.018 240);
+  --card-foreground: oklch(0.93 0.01 40);
+  --popover: oklch(0.14 0.015 240);
+  --popover-foreground: oklch(0.95 0.01 40);
+  --primary: oklch(0.70 0.22 40);
+  --primary-foreground: oklch(0.12 0.015 40);
+  --secondary: oklch(0.68 0.18 200);
+  --secondary-foreground: oklch(0.12 0.015 200);
+  --muted: oklch(0.22 0.02 240);
+  --muted-foreground: oklch(0.65 0.015 240);
+  --accent: oklch(0.72 0.16 200);
+  --accent-foreground: oklch(0.12 0.015 200);
+  --destructive: oklch(0.62 0.25 10);
+  --destructive-foreground: oklch(0.95 0.01 10);
+  --border: oklch(0.28 0.025 240);
+  --input: oklch(0.28 0.025 240);
+  --ring: oklch(0.70 0.22 40);
+  
+  /* Chart Tokens */
+  --chart-1: oklch(0.70 0.22 40);
+  --chart-2: oklch(0.68 0.18 200);
+  --chart-3: oklch(0.65 0.20 150);
+  --chart-4: oklch(0.70 0.18 280);
+  --chart-5: oklch(0.66 0.23 25);
+  
+  /* Sidebar Tokens */
+  --sidebar: oklch(0.16 0.017 240);
+  --sidebar-foreground: oklch(0.88 0.012 40);
+  --sidebar-primary: oklch(0.70 0.22 40);
+  --sidebar-primary-foreground: oklch(0.12 0.015 40);
+  --sidebar-accent: oklch(0.72 0.16 200);
+  --sidebar-accent-foreground: oklch(0.12 0.015 200);
+  --sidebar-border: oklch(0.25 0.022 240);
+  --sidebar-ring: oklch(0.70 0.22 40);
+}
+
+@theme inline {
+  /* Shadcn Core Mapping */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Charts Mapping */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar Mapping */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans min-h-screen;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  code, pre {
+    @apply font-mono;
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40;
+  }
+}
