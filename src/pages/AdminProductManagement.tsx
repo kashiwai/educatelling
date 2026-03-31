@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useProducts, type ProductFormData } from '@/hooks/useProducts';
 import { usePlans } from '@/hooks/usePlans';
+import { getPaymentSettings, savePaymentSettings, type PaymentSettings } from '@/hooks/usePaymentSettings';
 
 export default function AdminProductManagement() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState('yuna@metisbel.com');
   const [password, setPassword] = useState('admin123');
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'products' | 'plans'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'plans' | 'payment'>('products');
+  const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>(getPaymentSettings());
+  const [paymentSaved, setPaymentSaved] = useState(false);
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   
@@ -298,6 +301,21 @@ export default function AdminProductManagement() {
               }}
             >
               Plans ({plans.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('payment')}
+              style={{
+                padding: '0.75rem 1.5rem',
+                border: 'none',
+                backgroundColor: 'transparent',
+                borderBottom: activeTab === 'payment' ? '2px solid #007bff' : '2px solid transparent',
+                color: activeTab === 'payment' ? '#007bff' : '#666',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                fontWeight: activeTab === 'payment' ? '600' : '400'
+              }}
+            >
+              💳 Payment Settings
             </button>
           </div>
         </div>
@@ -705,6 +723,119 @@ export default function AdminProductManagement() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Payment Settings Tab */}
+        {activeTab === 'payment' && (
+          <div style={{ maxWidth: '600px' }}>
+            <h2 style={{ marginBottom: '1.5rem', color: '#333' }}>💳 Payment Settings</h2>
+
+            {/* Active Provider */}
+            <div style={{ marginBottom: '2rem', padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
+              <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#333' }}>Active Payment Provider</h3>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                {(['stripe', 'paypal', 'square'] as const).map(p => (
+                  <button
+                    key={p}
+                    onClick={() => setPaymentSettings({ ...paymentSettings, active_provider: p })}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      border: '2px solid',
+                      borderColor: paymentSettings.active_provider === p ? '#007bff' : '#ddd',
+                      borderRadius: '8px',
+                      background: paymentSettings.active_provider === p ? '#007bff' : 'white',
+                      color: paymentSettings.active_provider === p ? 'white' : '#333',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      fontSize: '0.95rem',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {p === 'stripe' ? '💳 Stripe' : p === 'paypal' ? '🅿️ PayPal' : '⬛ Square'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Stripe Settings */}
+            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'stripe' ? 1 : 0.6 }}>
+              <h3 style={{ marginTop: 0, color: '#333' }}>💳 Stripe</h3>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Publishable Key (pk_live_... or pk_test_...)</label>
+                <input
+                  type="text"
+                  value={paymentSettings.stripe_publishable_key}
+                  onChange={e => setPaymentSettings({ ...paymentSettings, stripe_publishable_key: e.target.value })}
+                  placeholder="pk_test_..."
+                  style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                />
+              </div>
+            </div>
+
+            {/* PayPal Settings */}
+            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'paypal' ? 1 : 0.6 }}>
+              <h3 style={{ marginTop: 0, color: '#333' }}>🅿️ PayPal</h3>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Client ID</label>
+                <input
+                  type="text"
+                  value={paymentSettings.paypal_client_id}
+                  onChange={e => setPaymentSettings({ ...paymentSettings, paypal_client_id: e.target.value })}
+                  placeholder="AXxx..."
+                  style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                />
+              </div>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#666' }}>
+                PayPal Developer Console → My Apps → Client ID
+              </p>
+            </div>
+
+            {/* Square Settings */}
+            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'square' ? 1 : 0.6 }}>
+              <h3 style={{ marginTop: 0, color: '#333' }}>⬛ Square</h3>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Application ID</label>
+                <input
+                  type="text"
+                  value={paymentSettings.square_app_id}
+                  onChange={e => setPaymentSettings({ ...paymentSettings, square_app_id: e.target.value })}
+                  placeholder="sandbox-sq0idb-..."
+                  style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Location ID</label>
+                <input
+                  type="text"
+                  value={paymentSettings.square_location_id}
+                  onChange={e => setPaymentSettings({ ...paymentSettings, square_location_id: e.target.value })}
+                  placeholder="L..."
+                  style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                />
+              </div>
+            </div>
+
+            {/* Save Button */}
+            <button
+              onClick={() => {
+                savePaymentSettings(paymentSettings);
+                setPaymentSaved(true);
+                setTimeout(() => setPaymentSaved(false), 3000);
+              }}
+              style={{
+                padding: '0.75rem 2rem',
+                background: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+              }}
+            >
+              {paymentSaved ? '✓ 保存しました' : '設定を保存する'}
+            </button>
           </div>
         )}
       </main>

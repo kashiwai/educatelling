@@ -3,11 +3,10 @@ import { motion } from 'framer-motion';
 import { BookOpen, Video, FileText, Award, Mail, Phone, MapPin, Loader2, Check, Star } from 'lucide-react';
 import { usePlans } from '@/hooks/usePlans';
 import { useProducts } from '@/hooks/useProducts';
-import { InquiryForm } from '@/components/InquiryForm';
+import { PaymentModal } from '@/components/payment/PaymentModal';
 import { IMAGES } from '@/assets/images';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 
 const spring = { type: 'spring' as const, stiffness: 300, damping: 35 };
@@ -30,6 +29,7 @@ export default function Home() {
   const [selected, setSelected] = useState<UnifiedItem | null>(null);
   const { plans, loading: plansLoading } = usePlans();
   const { products, loading: productsLoading, fetchProducts } = useProducts();
+
 
   useEffect(() => { fetchProducts(); }, []);
 
@@ -227,21 +227,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 問い合わせModal */}
-      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>お問い合わせ</DialogTitle>
-          </DialogHeader>
-          {selected && (
-            <InquiryForm
-              itemName={selected.title}
-              itemPrice={selected.priceLabel}
-              onClose={() => setSelected(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* 決済 → 問い合わせ Modal */}
+      {selected && (
+        <PaymentModal
+          open={!!selected}
+          onClose={() => setSelected(null)}
+          itemName={selected.title}
+          itemPrice={selected.priceLabel}
+          amount={selected.price}
+          currency={selected.currency}
+        />
+      )}
     </div>
   );
 }
