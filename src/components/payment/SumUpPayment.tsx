@@ -3,8 +3,7 @@ import { ExternalLink, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SumUpPaymentProps {
-  amount: number;
-  currency: string;
+  itemId: string;
   itemName: string;
   itemPrice: string;
   paymentLink: string;
@@ -12,12 +11,12 @@ interface SumUpPaymentProps {
   onError: (msg: string) => void;
 }
 
-export function SumUpPayment({ amount, currency, itemName, itemPrice, paymentLink, onSuccess, onError }: SumUpPaymentProps) {
+export function SumUpPayment({ itemName, itemPrice, paymentLink, onSuccess, onError }: SumUpPaymentProps) {
   const [linkOpened, setLinkOpened] = useState(false);
 
   const handleOpenLink = () => {
     if (!paymentLink) {
-      onError('SumUp 決済リンクが設定されていません。管理画面で設定してください。');
+      onError('SumUp payment link is not configured for this item. Please contact the administrator.');
       return;
     }
     window.open(paymentLink, '_blank', 'noopener,noreferrer');
@@ -25,20 +24,19 @@ export function SumUpPayment({ amount, currency, itemName, itemPrice, paymentLin
   };
 
   const handleConfirmPayment = () => {
-    const ref = `SUMUP-${Date.now()}`;
-    onSuccess(ref);
+    onSuccess(`SUMUP-${Date.now()}`);
   };
 
   return (
     <div className="space-y-4">
-      {/* 金額確認 */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
-        <p className="font-semibold text-blue-900 mb-1">お支払い金額</p>
-        <p className="text-2xl font-bold text-blue-700">{itemPrice}</p>
-        <p className="text-blue-600 text-xs mt-1">SumUp の決済ページで上記の金額をご入力ください</p>
+      {/* Amount display */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm font-medium text-blue-700 mb-1">Amount to pay</p>
+        <p className="text-2xl font-bold text-blue-800">{itemPrice}</p>
+        <p className="text-xs text-blue-600 mt-1">Please enter this amount on the SumUp payment page.</p>
       </div>
 
-      {/* Step 1: SumUp リンクを開く */}
+      {/* Step 1: Open SumUp link */}
       <Button
         onClick={handleOpenLink}
         className="w-full"
@@ -46,14 +44,14 @@ export function SumUpPayment({ amount, currency, itemName, itemPrice, paymentLin
         style={{ backgroundColor: '#00b9ff', color: 'white' }}
       >
         <ExternalLink className="w-4 h-4 mr-2" />
-        SumUp で支払う（新しいタブで開く）
+        Pay with SumUp — {itemPrice}
       </Button>
 
-      {/* Step 2: 支払い完了後 */}
+      {/* Step 2: Confirm after payment */}
       {linkOpened && (
         <div className="space-y-3 pt-2 border-t">
           <p className="text-sm text-muted-foreground text-center">
-            SumUp での支払いが完了したら、下のボタンを押してください
+            Once your payment is complete on SumUp, click the button below.
           </p>
           <Button
             onClick={handleConfirmPayment}
@@ -62,7 +60,7 @@ export function SumUpPayment({ amount, currency, itemName, itemPrice, paymentLin
             size="lg"
           >
             <CheckCircle2 className="w-4 h-4 mr-2" />
-            支払いが完了しました
+            I have completed payment
           </Button>
         </div>
       )}

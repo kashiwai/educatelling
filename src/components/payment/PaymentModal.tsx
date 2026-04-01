@@ -9,13 +9,14 @@ import { getPaymentSettings } from '@/hooks/usePaymentSettings';
 interface PaymentModalProps {
   open: boolean;
   onClose: () => void;
+  itemId: string;
   itemName: string;
   itemPrice: string;
   amount: number;
   currency: string;
 }
 
-export function PaymentModal({ open, onClose, itemName, itemPrice, amount, currency }: PaymentModalProps) {
+export function PaymentModal({ open, onClose, itemId, itemName, itemPrice, amount, currency }: PaymentModalProps) {
   const [paymentDone, setPaymentDone] = useState(false);
   const [paymentId, setPaymentId] = useState('');
   const [error, setError] = useState('');
@@ -44,11 +45,10 @@ export function PaymentModal({ open, onClose, itemName, itemPrice, amount, curre
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {paymentDone ? '申し込みフォーム' : `決済 — ${providerLabel[settings.active_provider]}`}
+            {paymentDone ? 'Application Form' : `Checkout — ${providerLabel[settings.active_provider]}`}
           </DialogTitle>
         </DialogHeader>
 
-        {/* 商品情報 */}
         {!paymentDone && (
           <div className="bg-muted/50 rounded-lg p-3 text-sm mb-4">
             <span className="font-semibold">{itemName}</span>
@@ -62,7 +62,7 @@ export function PaymentModal({ open, onClose, itemName, itemPrice, amount, curre
           </Alert>
         )}
 
-        {/* Step 1: 決済 */}
+        {/* Step 1: Payment */}
         {!paymentDone && (
           <>
             {settings.active_provider === 'paypal' && (
@@ -76,11 +76,10 @@ export function PaymentModal({ open, onClose, itemName, itemPrice, amount, curre
             )}
             {settings.active_provider === 'sumup' && (
               <SumUpPayment
-                amount={amount}
-                currency={currency}
+                itemId={itemId}
                 itemName={itemName}
                 itemPrice={itemPrice}
-                paymentLink={settings.sumup_payment_link}
+                paymentLink={settings.sumup_links[itemId] ?? ''}
                 onSuccess={handleSuccess}
                 onError={setError}
               />
@@ -88,7 +87,7 @@ export function PaymentModal({ open, onClose, itemName, itemPrice, amount, curre
           </>
         )}
 
-        {/* Step 2: 決済完了後 → 問い合わせフォーム */}
+        {/* Step 2: Post-payment inquiry form */}
         {paymentDone && (
           <InquiryForm
             itemName={itemName}

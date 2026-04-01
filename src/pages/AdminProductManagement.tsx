@@ -728,7 +728,7 @@ export default function AdminProductManagement() {
 
         {/* Payment Settings Tab */}
         {activeTab === 'payment' && (
-          <div style={{ maxWidth: '600px' }}>
+          <div style={{ maxWidth: '800px' }}>
             <h2 style={{ marginBottom: '1.5rem', color: '#333' }}>💳 Payment Settings</h2>
 
             {/* Active Provider */}
@@ -758,47 +758,119 @@ export default function AdminProductManagement() {
             </div>
 
             {/* PayPal Settings */}
-            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'paypal' ? 1 : 0.6 }}>
-              <h3 style={{ marginTop: 0, color: '#333' }}>🅿️ PayPal</h3>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Client ID</label>
-                <input
-                  type="text"
-                  value={paymentSettings.paypal_client_id}
-                  onChange={e => setPaymentSettings({ ...paymentSettings, paypal_client_id: e.target.value })}
-                  placeholder="AXxx..."
-                  style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
-                />
-              </div>
-              <p style={{ margin: 0, fontSize: '0.85rem', color: '#666' }}>
-                PayPal Developer Console → My Apps → Client ID
+            <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'paypal' ? 1 : 0.5 }}>
+              <h3 style={{ marginTop: 0, color: '#333' }}>🅿️ PayPal — Client ID</h3>
+              <input
+                type="text"
+                value={paymentSettings.paypal_client_id}
+                onChange={e => setPaymentSettings({ ...paymentSettings, paypal_client_id: e.target.value })}
+                placeholder="AXxx... (PayPal Developer Console → My Apps → Client ID)"
+                style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
+              />
+              <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.8rem', color: '#888' }}>
+                Amount is passed automatically from the plan/product price.
               </p>
             </div>
 
-            {/* SumUp Settings */}
-            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'sumup' ? 1 : 0.6 }}>
-              <h3 style={{ marginTop: 0, color: '#333' }}>💳 SumUp</h3>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>決済リンク URL</label>
-                <input
-                  type="url"
-                  value={paymentSettings.sumup_payment_link}
-                  onChange={e => setPaymentSettings({ ...paymentSettings, sumup_payment_link: e.target.value })}
-                  placeholder="https://pay.sumup.com/b2c/..."
-                  style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
-                />
+            {/* SumUp Settings — per item */}
+            <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'sumup' ? 1 : 0.5 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ margin: 0, color: '#333' }}>💳 SumUp — Payment Links</h3>
+                <a
+                  href="https://me.sumup.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ fontSize: '0.85rem', color: '#007bff', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  Open SumUp Dashboard ↗
+                </a>
               </div>
-              <div style={{ padding: '1rem', background: '#e8f4fd', borderRadius: '6px', fontSize: '0.85rem', color: '#1565c0' }}>
-                <strong>SumUp 決済リンクの作成方法:</strong>
-                <ol style={{ margin: '0.5rem 0 0 0', paddingLeft: '1.2rem', lineHeight: '1.8' }}>
-                  <li>SumUp Dashboard → Payment Links → Create a link</li>
-                  <li>金額・説明を設定して「Create」</li>
-                  <li>生成された URL（https://pay.sumup.com/b2c/...）を上に貼り付け</li>
-                </ol>
-                <p style={{ margin: '0.5rem 0 0 0', color: '#1976d2' }}>
-                  ※ API キー不要。お客様は SumUp のページでカード情報を入力します。
-                </p>
+
+              <div style={{ padding: '0.75rem 1rem', background: '#e8f4fd', borderRadius: '6px', fontSize: '0.82rem', color: '#1565c0', marginBottom: '1.25rem' }}>
+                For each plan/product: open SumUp Dashboard → Payment Links → Create a link with the matching amount → paste the URL below.
               </div>
+
+              {/* Plans */}
+              {plans.length > 0 && (
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <p style={{ margin: '0 0 0.75rem 0', fontWeight: '600', color: '#444', fontSize: '0.9rem' }}>Plans</p>
+                  <div style={{ display: 'grid', gap: '0.75rem' }}>
+                    {plans.map(plan => {
+                      const itemId = `plan-${plan.id}`;
+                      return (
+                        <div key={itemId} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0.5rem', alignItems: 'center', padding: '0.75rem', background: '#fafafa', borderRadius: '6px', border: '1px solid #eee' }}>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                              <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>{plan.name}</span>
+                              <span style={{ fontWeight: '700', color: '#28a745', fontSize: '0.9rem' }}>AUD ${plan.price}</span>
+                            </div>
+                            <input
+                              type="url"
+                              value={paymentSettings.sumup_links[itemId] ?? ''}
+                              onChange={e => setPaymentSettings({
+                                ...paymentSettings,
+                                sumup_links: { ...paymentSettings.sumup_links, [itemId]: e.target.value }
+                              })}
+                              placeholder="https://pay.sumup.com/b2c/..."
+                              style={{ width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.85rem', boxSizing: 'border-box' }}
+                            />
+                          </div>
+                          <a
+                            href="https://me.sumup.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Create SumUp link for this plan"
+                            style={{ padding: '0.5rem 0.75rem', background: '#00b9ff', color: 'white', borderRadius: '4px', fontSize: '0.8rem', textDecoration: 'none', whiteSpace: 'nowrap' }}
+                          >
+                            Create ↗
+                          </a>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Products */}
+              {products.length > 0 && (
+                <div>
+                  <p style={{ margin: '0 0 0.75rem 0', fontWeight: '600', color: '#444', fontSize: '0.9rem' }}>Products</p>
+                  <div style={{ display: 'grid', gap: '0.75rem' }}>
+                    {products.map(product => {
+                      const itemId = `product-${product.id}`;
+                      return (
+                        <div key={itemId} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0.5rem', alignItems: 'center', padding: '0.75rem', background: '#fafafa', borderRadius: '6px', border: '1px solid #eee' }}>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                              <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>{product.name_en}</span>
+                              <span style={{ fontWeight: '700', color: '#28a745', fontSize: '0.9rem' }}>AUD ${product.price_aud}</span>
+                            </div>
+                            <input
+                              type="url"
+                              value={paymentSettings.sumup_links[itemId] ?? ''}
+                              onChange={e => setPaymentSettings({
+                                ...paymentSettings,
+                                sumup_links: { ...paymentSettings.sumup_links, [itemId]: e.target.value }
+                              })}
+                              placeholder="https://pay.sumup.com/b2c/..."
+                              style={{ width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.85rem', boxSizing: 'border-box' }}
+                            />
+                          </div>
+                          <a
+                            href="https://me.sumup.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Create SumUp link for this product"
+                            style={{ padding: '0.5rem 0.75rem', background: '#00b9ff', color: 'white', borderRadius: '4px', fontSize: '0.8rem', textDecoration: 'none', whiteSpace: 'nowrap' }}
+                          >
+                            Create ↗
+                          </a>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Save Button */}
@@ -819,7 +891,7 @@ export default function AdminProductManagement() {
                 cursor: 'pointer',
               }}
             >
-              {paymentSaved ? '✓ 保存しました' : '設定を保存する'}
+              {paymentSaved ? '✓ Saved!' : 'Save Settings'}
             </button>
           </div>
         )}

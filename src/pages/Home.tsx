@@ -266,11 +266,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 決済 → 問い合わせ Modal */}
+      {/* Payment Modal */}
       {selected && (
         <PaymentModal
           open={!!selected}
           onClose={() => setSelected(null)}
+          itemId={selected.id}
           itemName={selected.title}
           itemPrice={selected.priceLabel}
           amount={selected.price}
