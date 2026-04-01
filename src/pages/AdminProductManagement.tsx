@@ -735,7 +735,7 @@ export default function AdminProductManagement() {
             <div style={{ marginBottom: '2rem', padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
               <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#333' }}>Active Payment Provider</h3>
               <div style={{ display: 'flex', gap: '1rem' }}>
-                {(['stripe', 'paypal', 'square'] as const).map(p => (
+                {(['paypal', 'sumup'] as const).map(p => (
                   <button
                     key={p}
                     onClick={() => setPaymentSettings({ ...paymentSettings, active_provider: p })}
@@ -749,27 +749,11 @@ export default function AdminProductManagement() {
                       cursor: 'pointer',
                       fontWeight: '600',
                       fontSize: '0.95rem',
-                      textTransform: 'capitalize',
                     }}
                   >
-                    {p === 'stripe' ? '💳 Stripe' : p === 'paypal' ? '🅿️ PayPal' : '⬛ Square'}
+                    {p === 'paypal' ? '🅿️ PayPal' : '💳 SumUp'}
                   </button>
                 ))}
-              </div>
-            </div>
-
-            {/* Stripe Settings */}
-            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'stripe' ? 1 : 0.6 }}>
-              <h3 style={{ marginTop: 0, color: '#333' }}>💳 Stripe</h3>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Publishable Key (pk_live_... or pk_test_...)</label>
-                <input
-                  type="text"
-                  value={paymentSettings.stripe_publishable_key}
-                  onChange={e => setPaymentSettings({ ...paymentSettings, stripe_publishable_key: e.target.value })}
-                  placeholder="pk_test_..."
-                  style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
-                />
               </div>
             </div>
 
@@ -791,28 +775,29 @@ export default function AdminProductManagement() {
               </p>
             </div>
 
-            {/* Square Settings */}
-            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'square' ? 1 : 0.6 }}>
-              <h3 style={{ marginTop: 0, color: '#333' }}>⬛ Square</h3>
+            {/* SumUp Settings */}
+            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'sumup' ? 1 : 0.6 }}>
+              <h3 style={{ marginTop: 0, color: '#333' }}>💳 SumUp</h3>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Application ID</label>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Merchant Code</label>
                 <input
                   type="text"
-                  value={paymentSettings.square_app_id}
-                  onChange={e => setPaymentSettings({ ...paymentSettings, square_app_id: e.target.value })}
-                  placeholder="sandbox-sq0idb-..."
+                  value={paymentSettings.sumup_merchant_code}
+                  onChange={e => setPaymentSettings({ ...paymentSettings, sumup_merchant_code: e.target.value })}
+                  placeholder="MXXXXXXXX"
                   style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
                 />
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Location ID</label>
-                <input
-                  type="text"
-                  value={paymentSettings.square_location_id}
-                  onChange={e => setPaymentSettings({ ...paymentSettings, square_location_id: e.target.value })}
-                  placeholder="L..."
-                  style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
-                />
+              <div style={{ padding: '1rem', background: '#fff3cd', borderRadius: '6px', fontSize: '0.85rem', color: '#856404' }}>
+                <strong>API Key の設定が必要です（1回のみ）:</strong>
+                <ol style={{ margin: '0.5rem 0 0 0', paddingLeft: '1.2rem' }}>
+                  <li>SumUp Dashboard → Integrations → API Keys → Generate key</li>
+                  <li>Supabase Dashboard → Edge Functions → Secrets に以下を追加:</li>
+                  <li style={{ listStyle: 'none', fontFamily: 'monospace', background: '#fff', padding: '0.3rem 0.5rem', borderRadius: '3px', margin: '0.25rem 0' }}>
+                    {'SUMUP_API_KEY = <生成したAPIキー>'}
+                  </li>
+                  <li>Merchant Code は上のフィールドで設定済み</li>
+                </ol>
               </div>
             </div>
 

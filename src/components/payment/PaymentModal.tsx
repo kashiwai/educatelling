@@ -3,8 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InquiryForm } from '@/components/InquiryForm';
 import { PayPalPayment } from './PayPalPayment';
-import { StripePayment } from './StripePayment';
-import { SquarePayment } from './SquarePayment';
+import { SumUpPayment } from './SumUpPayment';
 import { getPaymentSettings } from '@/hooks/usePaymentSettings';
 
 interface PaymentModalProps {
@@ -36,9 +35,8 @@ export function PaymentModal({ open, onClose, itemName, itemPrice, amount, curre
   };
 
   const providerLabel: Record<string, string> = {
-    stripe: 'Stripe',
     paypal: 'PayPal',
-    square: 'Square',
+    sumup: 'SumUp',
   };
 
   return (
@@ -76,24 +74,13 @@ export function PaymentModal({ open, onClose, itemName, itemPrice, amount, curre
                 onError={setError}
               />
             )}
-            {settings.active_provider === 'stripe' && (
-              <StripePayment
+            {settings.active_provider === 'sumup' && (
+              <SumUpPayment
                 amount={amount}
                 currency={currency}
-                publishableKey={settings.stripe_publishable_key}
                 itemName={itemName}
-                onSuccess={handleSuccess}
-                onError={setError}
-              />
-            )}
-            {settings.active_provider === 'square' && (
-              <SquarePayment
-                amount={amount}
-                currency={currency}
-                appId={settings.square_app_id}
-                locationId={settings.square_location_id}
-                itemName={itemName}
-                onSuccess={handleSuccess}
+                itemPrice={itemPrice}
+                merchantCode={settings.sumup_merchant_code}
                 onError={setError}
               />
             )}

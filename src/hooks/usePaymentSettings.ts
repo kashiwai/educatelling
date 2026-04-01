@@ -1,21 +1,17 @@
-export type PaymentProvider = 'stripe' | 'paypal' | 'square';
+export type PaymentProvider = 'paypal' | 'sumup';
 
 export interface PaymentSettings {
   active_provider: PaymentProvider;
-  stripe_publishable_key: string;
   paypal_client_id: string;
-  square_app_id: string;
-  square_location_id: string;
+  sumup_merchant_code: string;
 }
 
 const STORAGE_KEY = 'payment_settings';
 
 const defaults: PaymentSettings = {
   active_provider: 'paypal',
-  stripe_publishable_key: '',
   paypal_client_id: '',
-  square_app_id: '',
-  square_location_id: '',
+  sumup_merchant_code: '',
 };
 
 export function getPaymentSettings(): PaymentSettings {

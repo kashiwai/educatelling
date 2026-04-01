@@ -4,6 +4,8 @@ import { BookOpen, Video, FileText, Award, Mail, Phone, MapPin, Loader2, Check, 
 import { usePlans } from '@/hooks/usePlans';
 import { useProducts } from '@/hooks/useProducts';
 import { PaymentModal } from '@/components/payment/PaymentModal';
+import { InquiryForm } from '@/components/InquiryForm';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { IMAGES } from '@/assets/images';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,13 +27,33 @@ interface UnifiedItem {
   highlighted?: boolean;
 }
 
+interface SumUpReturn {
+  ref: string;
+  itemName: string;
+  itemPrice: string;
+}
+
 export default function Home() {
   const [selected, setSelected] = useState<UnifiedItem | null>(null);
+  const [sumUpReturn, setSumUpReturn] = useState<SumUpReturn | null>(null);
   const { plans, loading: plansLoading } = usePlans();
   const { products, loading: productsLoading, fetchProducts } = useProducts();
 
-
   useEffect(() => { fetchProducts(); }, []);
+
+  // SumUp 決済後リターン処理
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('sumup_paid') === '1') {
+      setSumUpReturn({
+        ref: params.get('sumup_ref') || '',
+        itemName: decodeURIComponent(params.get('sumup_item') || ''),
+        itemPrice: decodeURIComponent(params.get('sumup_price') || ''),
+      });
+      // URL をクリーンアップ
+      window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+    }
+  }, []);
 
   // プランとプロダクトを統合
   const planItems: UnifiedItem[] = plans.map(p => ({
@@ -72,6 +94,23 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      {/* SumUp 決済完了後の申し込みフォーム */}
+      <Dialog open={!!sumUpReturn} onOpenChange={(open) => !open && setSumUpReturn(null)}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>申し込みフォーム</DialogTitle>
+          </DialogHeader>
+          {sumUpReturn && (
+            <InquiryForm
+              itemName={sumUpReturn.itemName}
+              itemPrice={sumUpReturn.itemPrice}
+              paymentId={sumUpReturn.ref}
+              onClose={() => setSumUpReturn(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Hero */}
       <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
