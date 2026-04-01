@@ -2,7 +2,8 @@ export type PaymentProvider = 'paypal' | 'sumup';
 
 export interface PaymentSettings {
   active_provider: PaymentProvider;
-  paypal_client_id: string;
+  // PayPal.me username (e.g. "yuna626" → https://paypal.me/yuna626/150)
+  paypal_me_username: string;
   // key: item ID (e.g. "plan-uuid" or "product-uuid"), value: SumUp payment link URL
   sumup_links: Record<string, string>;
 }
@@ -11,7 +12,7 @@ const STORAGE_KEY = 'payment_settings';
 
 const defaults: PaymentSettings = {
   active_provider: 'paypal',
-  paypal_client_id: '',
+  paypal_me_username: '',
   sumup_links: {},
 };
 

@@ -69,7 +69,8 @@ export function PaymentModal({ open, onClose, itemId, itemName, itemPrice, amoun
               <PayPalPayment
                 amount={amount}
                 currency={currency}
-                clientId={settings.paypal_client_id}
+                username={settings.paypal_me_username}
+                itemPrice={itemPrice}
                 onSuccess={handleSuccess}
                 onError={setError}
               />

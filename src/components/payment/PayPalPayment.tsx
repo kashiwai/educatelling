@@ -1,67 +1,71 @@
-import { useEffect, useRef } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { ExternalLink, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface PayPalPaymentProps {
   amount: number;
   currency: string;
-  clientId: string;
-  onSuccess: (orderId: string) => void;
+  username: string;
+  itemPrice: string;
+  onSuccess: (ref: string) => void;
   onError: (msg: string) => void;
 }
 
-declare global {
-  interface Window {
-    paypal?: any;
-  }
-}
+export function PayPalPayment({ amount, username, itemPrice, onSuccess, onError }: PayPalPaymentProps) {
+  const [linkOpened, setLinkOpened] = useState(false);
 
-export function PayPalPayment({ amount, currency, clientId, onSuccess, onError }: PayPalPaymentProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const rendered = useRef(false);
+  const paypalUrl = username
+    ? `https://paypal.me/${username}/${amount}`
+    : '';
 
-  useEffect(() => {
-    if (!clientId) {
-      onError('PayPal Client ID が設定されていません。管理画面で設定してください。');
+  const handleOpenLink = () => {
+    if (!paypalUrl) {
+      onError('PayPal.me username is not configured. Please contact the administrator.');
       return;
     }
+    window.open(paypalUrl, '_blank', 'noopener,noreferrer');
+    setLinkOpened(true);
+  };
 
-    const scriptId = 'paypal-sdk';
-    const existing = document.getElementById(scriptId);
-
-    const renderButtons = () => {
-      if (rendered.current || !containerRef.current) return;
-      rendered.current = true;
-      window.paypal.Buttons({
-        createOrder: (_data: any, actions: any) =>
-          actions.order.create({
-            purchase_units: [{ amount: { value: amount.toFixed(2), currency_code: currency } }],
-          }),
-        onApprove: async (_data: any, actions: any) => {
-          const details = await actions.order.capture();
-          onSuccess(details.id);
-        },
-        onError: () => onError('PayPal 決済に失敗しました。'),
-      }).render(containerRef.current);
-    };
-
-    if (existing) {
-      if (window.paypal) renderButtons();
-    } else {
-      const script = document.createElement('script');
-      script.id = scriptId;
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${currency}`;
-      script.onload = renderButtons;
-      script.onerror = () => onError('PayPal SDK の読み込みに失敗しました。');
-      document.body.appendChild(script);
-    }
-  }, [clientId]);
+  const handleConfirmPayment = () => {
+    onSuccess(`PAYPAL-${Date.now()}`);
+  };
 
   return (
-    <div>
-      <div ref={containerRef} className="min-h-[50px]" />
-      {!window.paypal && (
-        <div className="flex justify-center py-4">
-          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+    <div className="space-y-4">
+      {/* Amount display */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm font-medium text-blue-700 mb-1">Amount to pay</p>
+        <p className="text-2xl font-bold text-blue-800">{itemPrice}</p>
+        <p className="text-xs text-blue-600 mt-1">The amount is pre-filled on the PayPal page.</p>
+      </div>
+
+      {/* Step 1: Open PayPal.me */}
+      <Button
+        onClick={handleOpenLink}
+        className="w-full"
+        size="lg"
+        style={{ backgroundColor: '#003087', color: 'white' }}
+      >
+        <ExternalLink className="w-4 h-4 mr-2" />
+        Pay with PayPal — {itemPrice}
+      </Button>
+
+      {/* Step 2: Confirm after payment */}
+      {linkOpened && (
+        <div className="space-y-3 pt-2 border-t">
+          <p className="text-sm text-muted-foreground text-center">
+            Once your payment is complete on PayPal, click the button below.
+          </p>
+          <Button
+            onClick={handleConfirmPayment}
+            variant="outline"
+            className="w-full border-green-500 text-green-700 hover:bg-green-50"
+            size="lg"
+          >
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            I have completed payment
+          </Button>
         </div>
       )}
     </div>

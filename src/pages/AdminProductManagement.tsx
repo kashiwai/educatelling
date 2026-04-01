@@ -759,16 +759,26 @@ export default function AdminProductManagement() {
 
             {/* PayPal Settings */}
             <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'paypal' ? 1 : 0.5 }}>
-              <h3 style={{ marginTop: 0, color: '#333' }}>🅿️ PayPal — Client ID</h3>
-              <input
-                type="text"
-                value={paymentSettings.paypal_client_id}
-                onChange={e => setPaymentSettings({ ...paymentSettings, paypal_client_id: e.target.value })}
-                placeholder="AXxx... (PayPal Developer Console → My Apps → Client ID)"
-                style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
-              />
-              <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.8rem', color: '#888' }}>
-                Amount is passed automatically from the plan/product price.
+              <h3 style={{ marginTop: 0, color: '#333' }}>🅿️ PayPal — PayPal.me Username</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <span style={{ color: '#666', fontSize: '0.95rem', whiteSpace: 'nowrap' }}>paypal.me/</span>
+                <input
+                  type="text"
+                  value={paymentSettings.paypal_me_username}
+                  onChange={e => setPaymentSettings({ ...paymentSettings, paypal_me_username: e.target.value.replace(/^\//, '') })}
+                  placeholder="your-username"
+                  style={{ flex: 1, padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem' }}
+                />
+              </div>
+              {paymentSettings.paypal_me_username && (
+                <div style={{ padding: '0.5rem 0.75rem', background: '#e8f4fd', borderRadius: '4px', fontSize: '0.82rem', color: '#1565c0', marginBottom: '0.5rem' }}>
+                  Example link: <strong>https://paypal.me/{paymentSettings.paypal_me_username}/150</strong>
+                  <span style={{ color: '#666' }}> ← amount is auto-filled per item</span>
+                </div>
+              )}
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#888' }}>
+                Personal PayPal account OK. Amount is automatically added to the link.
+                Get your username at <a href="https://paypal.me" target="_blank" rel="noopener noreferrer" style={{ color: '#007bff' }}>paypal.me</a>
               </p>
             </div>
 
