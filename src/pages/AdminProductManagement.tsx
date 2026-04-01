@@ -729,37 +729,14 @@ export default function AdminProductManagement() {
         {/* Payment Settings Tab */}
         {activeTab === 'payment' && (
           <div style={{ maxWidth: '800px' }}>
-            <h2 style={{ marginBottom: '1.5rem', color: '#333' }}>💳 Payment Settings</h2>
-
-            {/* Active Provider */}
-            <div style={{ marginBottom: '2rem', padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px' }}>
-              <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#333' }}>Active Payment Provider</h3>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                {(['paypal', 'sumup'] as const).map(p => (
-                  <button
-                    key={p}
-                    onClick={() => setPaymentSettings({ ...paymentSettings, active_provider: p })}
-                    style={{
-                      padding: '0.75rem 1.5rem',
-                      border: '2px solid',
-                      borderColor: paymentSettings.active_provider === p ? '#007bff' : '#ddd',
-                      borderRadius: '8px',
-                      background: paymentSettings.active_provider === p ? '#007bff' : 'white',
-                      color: paymentSettings.active_provider === p ? 'white' : '#333',
-                      cursor: 'pointer',
-                      fontWeight: '600',
-                      fontSize: '0.95rem',
-                    }}
-                  >
-                    {p === 'paypal' ? '🅿️ PayPal' : '💳 SumUp'}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <h2 style={{ marginBottom: '0.5rem', color: '#333' }}>💳 Payment Settings</h2>
+            <p style={{ margin: '0 0 1.5rem 0', color: '#666', fontSize: '0.9rem' }}>
+              Both methods are shown to customers. PayPal is always available. SumUp appears only when a link is set for that item.
+            </p>
 
             {/* PayPal Settings */}
-            <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'paypal' ? 1 : 0.5 }}>
-              <h3 style={{ marginTop: 0, color: '#333' }}>🅿️ PayPal — PayPal.me Username</h3>
+            <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '2px solid #003087', borderRadius: '8px' }}>
+              <h3 style={{ marginTop: 0, color: '#003087' }}>🅿️ PayPal — Main Payment (always shown)</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
                 <span style={{ color: '#666', fontSize: '0.95rem', whiteSpace: 'nowrap' }}>paypal.me/</span>
                 <input
@@ -783,9 +760,9 @@ export default function AdminProductManagement() {
             </div>
 
             {/* SumUp Settings — per item */}
-            <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'sumup' ? 1 : 0.5 }}>
+            <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '2px solid #00b9ff', borderRadius: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ margin: 0, color: '#333' }}>💳 SumUp — Payment Links</h3>
+                <h3 style={{ margin: 0, color: '#0099cc' }}>💳 SumUp — Optional (shown when link is set)</h3>
                 <a
                   href="https://me.sumup.com/"
                   target="_blank"
