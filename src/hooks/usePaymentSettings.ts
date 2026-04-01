@@ -12,7 +12,7 @@ const STORAGE_KEY = 'payment_settings';
 
 const defaults: PaymentSettings = {
   active_provider: 'paypal',
-  paypal_me_username: '',
+  paypal_me_username: 'educatelling',
   sumup_links: {},
 };
 
