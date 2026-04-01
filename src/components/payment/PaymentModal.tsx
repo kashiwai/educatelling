@@ -80,7 +80,8 @@ export function PaymentModal({ open, onClose, itemName, itemPrice, amount, curre
                 currency={currency}
                 itemName={itemName}
                 itemPrice={itemPrice}
-                merchantCode={settings.sumup_merchant_code}
+                paymentLink={settings.sumup_payment_link}
+                onSuccess={handleSuccess}
                 onError={setError}
               />
             )}

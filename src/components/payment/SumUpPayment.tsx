@@ -1,73 +1,71 @@
 import { useState } from 'react';
-import { Loader2, CreditCard } from 'lucide-react';
+import { ExternalLink, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 
 interface SumUpPaymentProps {
   amount: number;
   currency: string;
   itemName: string;
   itemPrice: string;
-  merchantCode: string;
+  paymentLink: string;
+  onSuccess: (ref: string) => void;
   onError: (msg: string) => void;
 }
 
-export function SumUpPayment({ amount, currency, itemName, itemPrice, merchantCode, onError }: SumUpPaymentProps) {
-  const [loading, setLoading] = useState(false);
+export function SumUpPayment({ amount, currency, itemName, itemPrice, paymentLink, onSuccess, onError }: SumUpPaymentProps) {
+  const [linkOpened, setLinkOpened] = useState(false);
 
-  const handlePay = async () => {
-    if (!merchantCode) {
-      onError('SumUp Merchant Code が設定されていません。管理画面で設定してください。');
+  const handleOpenLink = () => {
+    if (!paymentLink) {
+      onError('SumUp 決済リンクが設定されていません。管理画面で設定してください。');
       return;
     }
+    window.open(paymentLink, '_blank', 'noopener,noreferrer');
+    setLinkOpened(true);
+  };
 
-    setLoading(true);
-    try {
-      const checkoutRef = `OJK-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-      const returnUrl = `${window.location.origin}/?sumup_paid=1&sumup_ref=${encodeURIComponent(checkoutRef)}&sumup_item=${encodeURIComponent(itemName)}&sumup_price=${encodeURIComponent(itemPrice)}`;
-
-      const { data, error } = await supabase.functions.invoke('create-sumup-checkout', {
-        body: {
-          amount,
-          currency,
-          description: itemName,
-          checkout_reference: checkoutRef,
-          merchant_code: merchantCode,
-          return_url: returnUrl,
-        },
-      });
-
-      if (error || !data?.checkout_url) {
-        throw new Error(error?.message || 'SumUp チェックアウトの作成に失敗しました。');
-      }
-
-      // SumUp 決済ページへリダイレクト
-      window.location.href = data.checkout_url;
-    } catch (err: any) {
-      onError(err.message || 'SumUp 決済の開始に失敗しました。');
-      setLoading(false);
-    }
+  const handleConfirmPayment = () => {
+    const ref = `SUMUP-${Date.now()}`;
+    onSuccess(ref);
   };
 
   return (
     <div className="space-y-4">
-      <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
-        <p>SumUp の安全な決済ページへ移動して、カード情報を入力してください。</p>
-        <p className="mt-1">決済完了後、自動的にこのページに戻ります。</p>
+      {/* 金額確認 */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+        <p className="font-semibold text-blue-900 mb-1">お支払い金額</p>
+        <p className="text-2xl font-bold text-blue-700">{itemPrice}</p>
+        <p className="text-blue-600 text-xs mt-1">SumUp の決済ページで上記の金額をご入力ください</p>
       </div>
+
+      {/* Step 1: SumUp リンクを開く */}
       <Button
-        onClick={handlePay}
-        disabled={loading}
+        onClick={handleOpenLink}
         className="w-full"
         size="lg"
         style={{ backgroundColor: '#00b9ff', color: 'white' }}
       >
-        {loading ? (
-          <><Loader2 className="w-4 h-4 mr-2 animate-spin" />SumUp へ接続中...</>
-        ) : (
-          <><CreditCard className="w-4 h-4 mr-2" />SumUp で支払う — {itemPrice}</>
-        )}
+        <ExternalLink className="w-4 h-4 mr-2" />
+        SumUp で支払う（新しいタブで開く）
       </Button>
+
+      {/* Step 2: 支払い完了後 */}
+      {linkOpened && (
+        <div className="space-y-3 pt-2 border-t">
+          <p className="text-sm text-muted-foreground text-center">
+            SumUp での支払いが完了したら、下のボタンを押してください
+          </p>
+          <Button
+            onClick={handleConfirmPayment}
+            variant="outline"
+            className="w-full border-green-500 text-green-700 hover:bg-green-50"
+            size="lg"
+          >
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            支払いが完了しました
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

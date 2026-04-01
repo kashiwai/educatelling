@@ -3,7 +3,7 @@ export type PaymentProvider = 'paypal' | 'sumup';
 export interface PaymentSettings {
   active_provider: PaymentProvider;
   paypal_client_id: string;
-  sumup_merchant_code: string;
+  sumup_payment_link: string;
 }
 
 const STORAGE_KEY = 'payment_settings';
@@ -11,7 +11,7 @@ const STORAGE_KEY = 'payment_settings';
 const defaults: PaymentSettings = {
   active_provider: 'paypal',
   paypal_client_id: '',
-  sumup_merchant_code: '',
+  sumup_payment_link: '',
 };
 
 export function getPaymentSettings(): PaymentSettings {

@@ -779,25 +779,25 @@ export default function AdminProductManagement() {
             <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', opacity: paymentSettings.active_provider === 'sumup' ? 1 : 0.6 }}>
               <h3 style={{ marginTop: 0, color: '#333' }}>💳 SumUp</h3>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Merchant Code</label>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>決済リンク URL</label>
                 <input
-                  type="text"
-                  value={paymentSettings.sumup_merchant_code}
-                  onChange={e => setPaymentSettings({ ...paymentSettings, sumup_merchant_code: e.target.value })}
-                  placeholder="MXXXXXXXX"
+                  type="url"
+                  value={paymentSettings.sumup_payment_link}
+                  onChange={e => setPaymentSettings({ ...paymentSettings, sumup_payment_link: e.target.value })}
+                  placeholder="https://pay.sumup.com/b2c/..."
                   style={{ width: '100%', padding: '0.6rem', border: '1px solid #ddd', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' }}
                 />
               </div>
-              <div style={{ padding: '1rem', background: '#fff3cd', borderRadius: '6px', fontSize: '0.85rem', color: '#856404' }}>
-                <strong>API Key の設定が必要です（1回のみ）:</strong>
-                <ol style={{ margin: '0.5rem 0 0 0', paddingLeft: '1.2rem' }}>
-                  <li>SumUp Dashboard → Integrations → API Keys → Generate key</li>
-                  <li>Supabase Dashboard → Edge Functions → Secrets に以下を追加:</li>
-                  <li style={{ listStyle: 'none', fontFamily: 'monospace', background: '#fff', padding: '0.3rem 0.5rem', borderRadius: '3px', margin: '0.25rem 0' }}>
-                    {'SUMUP_API_KEY = <生成したAPIキー>'}
-                  </li>
-                  <li>Merchant Code は上のフィールドで設定済み</li>
+              <div style={{ padding: '1rem', background: '#e8f4fd', borderRadius: '6px', fontSize: '0.85rem', color: '#1565c0' }}>
+                <strong>SumUp 決済リンクの作成方法:</strong>
+                <ol style={{ margin: '0.5rem 0 0 0', paddingLeft: '1.2rem', lineHeight: '1.8' }}>
+                  <li>SumUp Dashboard → Payment Links → Create a link</li>
+                  <li>金額・説明を設定して「Create」</li>
+                  <li>生成された URL（https://pay.sumup.com/b2c/...）を上に貼り付け</li>
                 </ol>
+                <p style={{ margin: '0.5rem 0 0 0', color: '#1976d2' }}>
+                  ※ API キー不要。お客様は SumUp のページでカード情報を入力します。
+                </p>
               </div>
             </div>
 
