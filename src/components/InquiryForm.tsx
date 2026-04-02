@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 
 interface InquiryFormProps {
-  itemName: string;
+  itemNames: string;
   itemPrice: string;
   paymentId?: string;
   onClose: () => void;
@@ -21,7 +21,7 @@ interface FormData {
   message: string;
 }
 
-export function InquiryForm({ itemName, itemPrice, paymentId, onClose }: InquiryFormProps) {
+export function InquiryForm({ itemNames, itemPrice, paymentId, onClose }: InquiryFormProps) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -37,7 +37,7 @@ export function InquiryForm({ itemName, itemPrice, paymentId, onClose }: Inquiry
         phone: data.phone || '',
         child_age: 0,
         current_level: 'inquiry',
-        selected_plan: itemName,
+        selected_plan: itemNames,
         message: `[Payment ID: ${paymentId || 'N/A'}] ${data.message}`,
         status: paymentId ? 'approved' : 'pending',
       }]);
@@ -45,12 +45,12 @@ export function InquiryForm({ itemName, itemPrice, paymentId, onClose }: Inquiry
 
     const body = encodeURIComponent(
       `[Application Received]\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone}\n\n` +
-      `Selected: ${itemName} (${itemPrice})\n` +
+      `Selected: ${itemNames} (${itemPrice})\n` +
       (paymentId ? `Payment ID: ${paymentId}\n` : '') +
       `\nMessage:\n${data.message}`
     );
     window.open(
-      `mailto:yuna@metisbel.com?subject=${encodeURIComponent(`[Application] ${itemName}`)}&body=${body}`
+      `mailto:yuna@metisbel.com?subject=${encodeURIComponent(`[Application] ${itemNames}`)}&body=${body}`
     );
 
     setSubmitting(false);
@@ -80,7 +80,7 @@ export function InquiryForm({ itemName, itemPrice, paymentId, onClose }: Inquiry
       )}
 
       <div className="bg-muted/50 rounded-lg p-3 text-sm">
-        <span className="font-semibold">{itemName}</span>
+        <span className="font-semibold">{itemNames}</span>
         <span className="text-muted-foreground ml-2">{itemPrice}</span>
       </div>
 

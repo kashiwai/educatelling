@@ -5,26 +5,36 @@ import { InquiryForm } from '@/components/InquiryForm';
 import { StripePayment } from './StripePayment';
 import { getPaymentSettings } from '@/hooks/usePaymentSettings';
 
+interface CartItem {
+  id: string;
+  title: string;
+  priceLabel: string;
+  price: number;
+}
+
 interface PaymentModalProps {
   open: boolean;
   onClose: () => void;
-  itemId: string;
-  itemName: string;
-  itemPrice: string;
-  amount: number;
+  items: CartItem[];
+  totalAmount: number;
   currency: string;
+  onSuccess?: () => void;
 }
 
-export function PaymentModal({ open, onClose, itemId, itemName, itemPrice, amount, currency }: PaymentModalProps) {
+export function PaymentModal({ open, onClose, items, totalAmount, currency, onSuccess }: PaymentModalProps) {
   const [paymentDone, setPaymentDone] = useState(false);
   const [paymentId, setPaymentId] = useState('');
   const [error, setError] = useState('');
   const settings = getPaymentSettings();
 
+  const itemNames = items.map(i => i.title).join(', ');
+  const totalLabel = `${currency} $${totalAmount.toLocaleString()}`;
+
   const handleSuccess = (id: string) => {
     setPaymentId(id);
     setPaymentDone(true);
     setError('');
+    onSuccess?.();
   };
 
   const handleClose = () => {
@@ -44,9 +54,19 @@ export function PaymentModal({ open, onClose, itemId, itemName, itemPrice, amoun
         </DialogHeader>
 
         {!paymentDone && (
-          <div className="bg-muted/50 rounded-lg p-3 text-sm mb-2">
-            <span className="font-semibold">{itemName}</span>
-            <span className="text-muted-foreground ml-2">{itemPrice}</span>
+          <div className="bg-muted/50 rounded-lg p-3 text-sm mb-2 space-y-1">
+            {items.map(item => (
+              <div key={item.id} className="flex justify-between">
+                <span className="font-medium truncate mr-2">{item.title}</span>
+                <span className="text-muted-foreground shrink-0">{item.priceLabel}</span>
+              </div>
+            ))}
+            {items.length > 1 && (
+              <div className="flex justify-between border-t pt-1 mt-1 font-semibold">
+                <span>Total</span>
+                <span className="text-primary">{totalLabel}</span>
+              </div>
+            )}
           </div>
         )}
 
@@ -58,10 +78,10 @@ export function PaymentModal({ open, onClose, itemId, itemName, itemPrice, amoun
 
         {!paymentDone && (
           <StripePayment
-            amount={amount}
+            amount={totalAmount}
             currency={currency}
-            itemName={itemName}
-            itemPrice={itemPrice}
+            itemName={itemNames}
+            itemPrice={totalLabel}
             publishableKey={settings.stripe_publishable_key}
             onSuccess={handleSuccess}
             onError={setError}
@@ -70,8 +90,8 @@ export function PaymentModal({ open, onClose, itemId, itemName, itemPrice, amoun
 
         {paymentDone && (
           <InquiryForm
-            itemName={itemName}
-            itemPrice={itemPrice}
+            itemNames={itemNames}
+            itemPrice={totalLabel}
             paymentId={paymentId}
             onClose={handleClose}
           />
