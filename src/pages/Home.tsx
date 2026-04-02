@@ -233,7 +233,7 @@ export default function Home() {
                         <Button
                           size="sm"
                           className="w-full"
-                          variant={added ? 'default' : item.highlighted ? 'default' : 'outline'}
+                          variant="outline"
                           onClick={() => toggleCart(item)}
                         >
                           {added
