@@ -32,9 +32,10 @@ function CheckoutForm({ itemPrice, onSuccess, onError }: {
     setLoading(true);
     setLocalError('');
 
+    const returnUrl = `${window.location.origin}${window.location.pathname}?payment_complete=1`;
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      confirmParams: { return_url: window.location.href },
+      confirmParams: { return_url: returnUrl },
       redirect: 'if_required',
     });
 

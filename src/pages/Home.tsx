@@ -53,6 +53,16 @@ export default function Home() {
       });
       window.history.replaceState({}, '', window.location.pathname + window.location.hash);
     }
+    // Handle Stripe 3D Secure redirect return
+    if (params.get('payment_complete') === '1') {
+      const redirectStatus = params.get('redirect_status');
+      if (redirectStatus === 'succeeded') {
+        alert('Payment successful! Thank you for your purchase.');
+      } else if (redirectStatus === 'failed') {
+        alert('Payment authentication failed. Please try a different card.');
+      }
+      window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+    }
   }, []);
 
   const planItems: UnifiedItem[] = plans.map(p => ({
